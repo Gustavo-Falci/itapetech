@@ -920,3 +920,109 @@ select option {
     .nav-links { gap: 10px; }
     .nav-link-home { display: none; } /* Ocultar Home em telas muito pequenas se necessário */
 }
+
+/* =========================================
+   MEDIA QUERIES - MOBILE (ADICIONE NO FINAL)
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* 1. Ajustes Gerais */
+    body {
+        overflow-x: hidden; /* Evita rolagem lateral acidental */
+    }
+
+    /* 2. Navegação Empilhada */
+    nav {
+        flex-direction: column;
+        padding: 15px;
+        background: rgba(11, 14, 20, 0.95); /* Mais escuro para leitura */
+    }
+
+    .logo {
+        margin-bottom: 15px;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Esconde o link [Home] no mobile para economizar espaço, 
+       já que clicar na Logo já leva para a Home */
+    .nav-link-home {
+        display: none;
+    }
+
+    /* 3. Hero Section (Topo) */
+    .hero-container {
+        height: auto;
+        min-height: 60vh; /* Menor altura no celular */
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem !important; /* Força fonte menor */
+        line-height: 1.1;
+    }
+
+    /* 4. Grids de Serviços (Uma coluna por vez) */
+    .modules-grid,
+    .services-grid {
+        grid-template-columns: 1fr !important;
+        padding: 40px 20px !important; /* Reduz as margens laterais gigantes */
+        gap: 20px;
+    }
+
+    /* 5. Balão de Detalhes (Transformação em Bottom Sheet) */
+    /* No celular, ele não flutua. Ele fixa no fundo da tela. */
+    .container-balao {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 9999;
+    }
+
+    .balao-glass {
+        border-radius: 25px 25px 0 0 !important; /* Arredonda só em cima */
+        max-height: 80vh; /* Ocupa no máximo 80% da tela */
+        overflow-y: auto; /* Permite rolar se o texto for grande */
+        margin: 0 !important;
+        border-bottom: none;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    }
+
+    /* Remove a setinha indicadora no mobile, pois o balão vem de baixo */
+    .seta-balao {
+        display: none !important;
+    }
+
+    /* Ajuste do conteúdo do balão */
+    .balao-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .icone-grande {
+        padding: 15px;
+        font-size: 2rem;
+    }
+
+    .balao-grid {
+        grid-template-columns: 1fr !important; /* Lista vertical */
+        gap: 10px;
+    }
+    
+    /* 6. Formulários (Login/Registro/Solicitar) */
+    .module-card {
+        padding: 25px !important;
+        margin: 10px;
+    }
+}

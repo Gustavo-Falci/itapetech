@@ -195,6 +195,9 @@
     }
 
     function atualizarPosicaoSeta(card, container, seta) {
+
+        if (window.innerWidth <= 768) return;
+        
         const rectCard = card.getBoundingClientRect();
         const rectContainer = container.getBoundingClientRect();
         
