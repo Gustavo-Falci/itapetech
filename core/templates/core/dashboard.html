@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    
+    <div class="dash-header" data-aos="fade-down">
+        <div class="header-content">
+            <h1 class="welcome-title">Olá, {{ user.first_name }}<span class="neon-dot">.</span></h1>
+            <p class="welcome-subtitle">Painel de Controle</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{% url 'solicitar' %}" class="btn-neon-pulse">
+                <i class="fas fa-plus-circle"></i> Novo Orçamento
+            </a>
+
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout-icon" title="Sair">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="services-container custom-scrollbar">
+        {% if servicos %}
+            <div class="services-grid">
+                {% for servico in servicos %}
+                <div class="service-card" data-aos="fade-up">
+                    
+                    <div class="card-top">
+                        <div class="service-icon-box">
+                            {% if "Formatação" in servico.titulo %}
+                                <i class="fas fa-compact-disc"></i>
+                            {% elif "Limpeza" in servico.titulo %}
+                                <i class="fas fa-wind"></i>
+                            {% else %}
+                                <i class="fas fa-tools"></i>
+                            {% endif %}
+                        </div>
+                        <div class="status-pill {{ servico.status|default:'pendente' }}">
+                            {{ servico.get_status_display|default:"Analisando" }}
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h3 class="service-title">{{ servico.titulo }}</h3>
+                        <p class="service-model">{{ servico.computador.modelo }}</p>
+                        
+                        <div class="service-date">
+                            <i class="far fa-calendar-alt"></i> Solicitado em {{ servico.data|date:"d/m/Y" }}
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state" data-aos="zoom-in">
+                <i class="fas fa-ghost empty-icon"></i>
+                <h3>Nada por aqui ainda.</h3>
+                <p>Seu computador está precisando de uma ajuda?</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+# Ignorar ambiente virtual
+venv/
+env/
+.env
+
+# Ignorar arquivos compilados do Python
+__pycache__/
+*.pyc
+
+# Ignorar banco de dados local (se for usar um novo na Oracle)
+db.sqlite3
+
+# Ignorar arquivos do sistema operacional
+.DS_Store
+Thumbs.db

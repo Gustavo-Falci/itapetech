@@ -1,0 +1,179 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="height: calc(95vh - 60px); display: flex; justify-content: center; align-items: center; padding: 10px;">
+    
+    <div id="form-card" class="module-card" style="max-width: 600px; width: 100%; padding: 30px; border-radius: 20px;" data-aos="fade-up">
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <div style="background: rgba(0, 242, 255, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem; color: var(--neon-cyan);"></i>
+            </div>
+            <h2 style="font-family: 'Syne'; font-size: 1.8rem; margin-bottom: 5px;">Solicitar Orçamento</h2>
+            <p id="status-msg" class="status-text">
+                Preencha todos os campos para o orçamento.
+            </p>
+        </div>
+
+        <form id="orcamentoForm" onsubmit="validarEEnviar(event)" novalidate>
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Seu Nome <span style="color: var(--neon-cyan)">*</span></label>
+                <input type="text" id="nome"
+                       class="input-padrao"
+                       oninput="limparErro(this)"
+                       placeholder="Como podemos te chamar?">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Modelo do Aparelho <span style="color: var(--neon-cyan)">*</span></label>
+                <input type="text" id="modelo"
+                       class="input-padrao"
+                       oninput="limparErro(this)"
+                       placeholder="Ex: Notebook Asus, PC Gamer...">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Serviço Desejado <span style="color: var(--neon-cyan)">*</span></label>
+                <select id="servico" class="input-padrao" onchange="limparErro(this)">
+                    <option value="" disabled selected>Selecione um serviço...</option>
+                    <option value="Formatação">Formatação/instalação (Windows ou Linux)</option>
+                    <option value="Limpeza">Limpeza/Troca de Pasta Térmica</option>
+                    <option value="Upgrade">Upgrade (SSD/Memória)</option>
+                    <option value="Montagem">Montagem de computador</option>
+                    <option value="Outro">Outro Problema</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Detalhes do Problema <span style="color: var(--neon-cyan)">*</span></label>
+                <textarea id="detalhes" rows="3" 
+                          class="input-padrao"
+                          oninput="limparErro(this)"
+                          style="resize: none;"
+                          placeholder="Ex: O computador está lento, travando ou esquentando muito..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary btn-submit" style="width: 100%; border: none; cursor: pointer; padding: 14px; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> ENVIAR SOLICITAÇÃO
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function limparErro(input) {
+        // Remove a classe de erro do CSS global
+        input.classList.remove('input-error');
+        
+        // Verifica se ainda existem campos com erro
+        const inputsComErro = document.querySelectorAll('.input-error');
+        
+        if (inputsComErro.length === 0) {
+            const msg = document.getElementById('status-msg');
+            msg.innerText = "Preencha todos os campos para o orçamento.";
+            msg.classList.remove('status-error');
+            // Remove qualquer estilização inline de cor que tenha ficado
+            msg.style.color = ""; 
+            msg.innerHTML = "Preencha todos os campos para o orçamento.";
+        }
+    }
+
+    function validarEEnviar(event) {
+        event.preventDefault();
+
+        // Mapeando todos os campos
+        const nomeInput = document.getElementById('nome');
+        const modeloInput = document.getElementById('modelo');
+        const servicoInput = document.getElementById('servico');
+        const detalhesInput = document.getElementById('detalhes');
+        
+        const card = document.getElementById('form-card');
+        const statusMsg = document.getElementById('status-msg');
+        
+        let temErro = false;
+
+        card.classList.remove('shake-error');
+        void card.offsetWidth; // Reinicia animação
+
+        // Validações
+        if (!nomeInput.value.trim()) { marcarErro(nomeInput); temErro = true; }
+        if (!modeloInput.value.trim()) { marcarErro(modeloInput); temErro = true; }
+        if (!servicoInput.value || servicoInput.value === "") { marcarErro(servicoInput); temErro = true; }
+        if (!detalhesInput.value.trim()) { marcarErro(detalhesInput); temErro = true; }
+
+        if (temErro) {
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = "<i class='fas fa-exclamation-circle'></i> Todos os campos são obrigatórios.";
+            statusMsg.classList.add('status-error');
+            return;
+        }
+
+        enviarParaWhatsAppReal();
+    }
+
+    function marcarErro(input) {
+        // Usa a classe do CSS em vez de style inline
+        input.classList.add('input-error');
+        
+        input.animate([
+            { transform: 'translateX(0)' },
+            { transform: 'translateX(5px)' },
+            { transform: 'translateX(-5px)' },
+            { transform: 'translateX(0)' }
+        ], { duration: 300 });
+    }
+
+    function enviarParaWhatsAppReal() {
+        const nome = document.getElementById('nome').value;
+        const modelo = document.getElementById('modelo').value;
+        const servico = document.getElementById('servico').value;
+        const detalhes = document.getElementById('detalhes').value;
+        const btn = document.querySelector('.btn-submit');
+        const textoOriginal = btn.innerHTML;
+
+        // Feedback visual no botão
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
+
+        // Envia para o Backend (Opcional, se você tiver essa rota)
+        fetch('/api/salvar_lead/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ nome, modelo, servico, detalhes })
+        })
+        .then(() => {
+            // Monta a mensagem do WhatsApp
+            const msg = `*NOVA SOLICITAÇÃO* \uD83D\uDEE0\n\n` + 
+                        `\uD83D\uDC64 *Cliente:* ${nome}\n` + 
+                        `\uD83D\uDCBB *Aparelho:* ${modelo}\n` + 
+                        `\u2699\uFE0F *Serviço:* ${servico}\n` + 
+                        `\uD83D\uDCDD *Obs:* ${detalhes}`;
+            
+            const numeroWhatsApp = "5515998089768";
+            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(msg)}`, '_blank');
+            
+            // Restaura o botão e limpa o formulário
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            
+            const statusMsg = document.getElementById('status-msg');
+            statusMsg.innerHTML = "<i class='fas fa-check'></i> Enviado com sucesso!";
+            statusMsg.style.color = "#00ff88"; // Verde sucesso manual ou crie .status-success no CSS
+            
+            document.getElementById('orcamentoForm').reset();
+        })
+        .catch(() => {
+            // Fallback caso a API falhe (abre o Whats direto)
+            const numeroWhatsApp = "5515998089768";
+            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}`, '_blank');
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.innerHTML = textoOriginal;
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="height: calc(95vh - 60px); display: flex; justify-content: center; align-items: center; padding: 10px;">
+    
+    <div id="login-card" class="module-card" style="max-width: 450px; width: 100%; padding: 30px; border-radius: 20px;" data-aos="zoom-in">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="background: rgba(0, 242, 255, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-user-lock" style="font-size: 1.5rem; color: var(--neon-cyan);"></i>
+            </div>
+            <h2 style="font-family: 'Syne'; font-size: 1.8rem; margin-bottom: 5px;">Área do Cliente</h2>
+            
+            <p id="status-msg" class="status-text">
+                Acesse para acompanhar seus serviços.
+            </p>
+        </div>
+
+        <form method="post" onsubmit="validarLogin(event)" novalidate>
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">E-mail</label>
+                <input type="email" name="email" id="email"
+                       oninput="limparErro(this)"
+                       class="input-padrao"
+                       placeholder="exemplo@email.com">
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Senha</label>
+                <input type="password" name="password" id="password"
+                       oninput="limparErro(this)"
+                       class="input-padrao"
+                       placeholder="Sua senha">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 14px; font-size: 0.9rem;">
+                ACESSAR
+            </button>
+        </form>
+
+        <div style="margin-top: 30px; border-top: 1px solid var(--border-glass); padding-top: 20px; text-align: center;">
+            
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-main);">
+                Ainda não tem cadastro? 
+                <a href="{% url 'register' %}" style="color: var(--neon-cyan); font-weight: 700; text-decoration: none; margin-left: 5px; transition: 0.3s;">
+                    CRIAR CONTA
+                </a>
+            </p>
+
+            <p style="font-size: 0.8rem; color: var(--text-dim);">
+                Problemas com o acesso? <a href="https://wa.me/5515998089768" target="_blank" style="color: var(--text-dim); text-decoration: underline;">Fale conosco</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function limparErro(input) {
+        // Remove a classe de erro definida no CSS
+        input.classList.remove('input-error');
+        
+        const msg = document.getElementById('status-msg');
+        
+        // Se a mensagem atual for de erro, restaura a mensagem padrão
+        if (msg.classList.contains('status-error')) {
+            msg.innerText = "Acesse para acompanhar seus serviços.";
+            msg.classList.remove('status-error');
+            // Remove qualquer ícone HTML que tenha sido inserido
+            msg.innerHTML = "Acesse para acompanhar seus serviços."; 
+        }
+    }
+
+    function validarLogin(event) {
+        const userField = document.getElementById('email');
+        const passField = document.getElementById('password');
+        const card = document.getElementById('login-card');
+        const statusMsg = document.getElementById('status-msg');
+        
+        let temErro = false;
+
+        card.classList.remove('shake-error');
+        void card.offsetWidth; // Reinicia a animação
+
+        if (!userField.value.trim()) {
+            marcarErroJs(userField);
+            temErro = true;
+        }
+
+        if (!passField.value.trim()) {
+            marcarErroJs(passField);
+            temErro = true;
+        }
+
+        if (temErro) {
+            event.preventDefault();
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = "<i class='fas fa-exclamation-circle'></i> Preencha e-mail e senha.";
+            statusMsg.classList.add('status-error');
+        }
+    }
+
+    function marcarErroJs(input) {
+        // Adiciona a classe do style.css em vez de mexer no estilo inline
+        input.classList.add('input-error');
+        
+        input.animate([
+            { transform: 'translateX(0)' },
+            { transform: 'translateX(5px)' },
+            { transform: 'translateX(-5px)' },
+            { transform: 'translateX(0)' }
+        ], { duration: 300 });
+    }
+
+    // --- Captura o erro vindo do Django (Python) ---
+    document.addEventListener("DOMContentLoaded", function() {
+        const serverError = "{{ error|default:''|escapejs }}";
+        
+        if (serverError) {
+            const card = document.getElementById('login-card');
+            const msg = document.getElementById('status-msg');
+            const inputs = document.querySelectorAll('.input-padrao');
+
+            // 1. Treme o cartão
+            card.classList.add('shake-error');
+            
+            // 2. Mostra a mensagem vermelha
+            msg.innerHTML = `<i class='fas fa-exclamation-circle'></i> ${serverError}`;
+            msg.classList.add('status-error');
+
+            // 3. Adiciona a classe de erro nos inputs
+            inputs.forEach(input => {
+                input.classList.add('input-error');
+            });
+        }
+    });
+</script>
+{% endblock %}

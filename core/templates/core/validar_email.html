@@ -1,0 +1,252 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="height: calc(95vh - 60px); display: flex; justify-content: center; align-items: center; padding: 10px;">
+    
+    <div id="validation-card" class="module-card" style="max-width: 450px; width: 100%; padding: 40px; border-radius: 20px;" data-aos="zoom-in">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="background: rgba(0, 255, 136, 0.1); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fas fa-envelope-open-text" style="font-size: 1.8rem; color: var(--neon-green, #00ff88);"></i>
+            </div>
+            
+            <h2 style="font-family: 'Syne'; font-size: 1.8rem; margin-bottom: 10px;">Verificar E-mail</h2>
+            
+            <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.5;">
+                Enviamos um código de 6 dígitos para:<br>
+                <strong style="color: white;">{{ request.session.email_validacao }}</strong>
+            </p>
+            
+            <p id="status-msg" class="status-text" style="margin-top: 10px; font-size: 0.85rem;">
+                Digite o código abaixo para ativar sua conta.
+            </p>
+        </div>
+
+        <form method="post" novalidate onsubmit="validarCodigo(event)">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 25px;">
+                <input type="text" name="codigo" id="codigo"
+                       maxlength="6"
+                       oninput="formatarCodigo(this)"
+                       class="input-padrao input-codigo"
+                       placeholder="000000"
+                       autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 14px; font-size: 0.9rem; margin-bottom: 20px;">
+                CONFIRMAR CÓDIGO
+            </button>
+        </form>
+
+        <div style="text-align: center;">
+            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                Não recebeu o código? <br>
+                <a href="javascript:void(0)" 
+                    id="btn-reenviar"
+                    onclick="reenviarCodigoSemRecarregar()" 
+                    style="color: var(--neon-cyan); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                    Reenviar Código
+                </a>
+            </p>
+            <p id="msg-reenvio" style="font-size: 0.8rem; margin-top: 10px; opacity: 0; transition: opacity 0.3s; min-height: 20px;"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- VARIÁVEIS GLOBAIS DE CONTROLE ---
+    let bloqueioAtivo = false;
+    let intervaloContagem;
+
+    // --- FUNÇÕES DE VALIDAÇÃO DO FORMULÁRIO ---
+    
+    // Formata o input para aceitar apenas números e remove o erro ao digitar
+    function formatarCodigo(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+        
+        // Limpa visual de erro usando classes
+        input.classList.remove('input-error');
+        
+        const msg = document.getElementById('status-msg');
+        if(msg.classList.contains('status-error')) {
+            msg.classList.remove('status-error');
+            msg.innerText = "Digite o código abaixo para ativar sua conta.";
+            msg.innerHTML = "Digite o código abaixo para ativar sua conta.";
+        }
+    }
+
+    // Validação no Front-end antes de enviar (submit do form)
+    function validarCodigo(event) {
+        const codigoField = document.getElementById('codigo');
+        const card = document.getElementById('validation-card');
+        const statusMsg = document.getElementById('status-msg');
+        
+        // Reset animação
+        card.classList.remove('shake-error');
+        void card.offsetWidth;
+
+        if (codigoField.value.length < 6) {
+            event.preventDefault();
+            
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = "<i class='fas fa-exclamation-circle'></i> O código deve ter 6 dígitos.";
+            statusMsg.classList.add('status-error');
+            
+            // Adiciona a classe de erro do CSS
+            codigoField.classList.add('input-error');
+        }
+    }
+
+    // --- LÓGICA DE REENVIO COM TIMEOUT, SEGURANÇA E AJAX ---
+
+    function reenviarCodigoSemRecarregar() {
+        if (bloqueioAtivo) return; // Se já está processando, ignora cliques
+
+        const btn = document.getElementById('btn-reenviar');
+        const msgBox = document.getElementById('msg-reenvio');
+
+        // 1. Feedback Visual Imediato
+        btn.style.opacity = "0.5";
+        btn.innerText = "Verificando...";
+        bloqueioAtivo = true;
+        
+        // Limpa mensagem anterior
+        if(msgBox) msgBox.style.opacity = "0";
+
+        // 2. TIMEOUT DE SEGURANÇA (15s)
+        const timeoutSeguranca = setTimeout(() => {
+            if(btn.innerText === "Verificando...") {
+                if(msgBox) {
+                    msgBox.innerText = "Sem resposta do servidor.";
+                    msgBox.style.color = "#ef4444";
+                    msgBox.style.opacity = "1";
+                }
+                resetarBotao();
+            }
+        }, 15000);
+
+        // 3. Chamada AJAX
+        fetch("{% url 'reenviar_codigo' %}", {
+            method: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => {
+            if (!response.ok && response.status !== 429) {
+                throw new Error("Erro na rede ou servidor (Status " + response.status + ")");
+            }
+            return response.json();
+        })
+        .then(data => {
+            clearTimeout(timeoutSeguranca);
+
+            if (data.status === 'success') {
+                // SUCESSO
+                if(msgBox) {
+                    msgBox.innerText = "E-mail enviado com sucesso!";
+                    msgBox.style.color = "#00ff88"; // Verde Neon
+                    msgBox.style.opacity = "1";
+                }
+                iniciarContagem(90); 
+
+            } else {
+                // ERRO
+                if(msgBox) {
+                    msgBox.innerText = data.message;
+                    msgBox.style.color = "#ef4444";
+                    msgBox.style.opacity = "1";
+                }
+                
+                if (data.wait) {
+                    iniciarContagem(data.wait);
+                } else {
+                    resetarBotao();
+                }
+            }
+        })
+        .catch(error => {
+            clearTimeout(timeoutSeguranca);
+            console.error('Erro:', error);
+            if(msgBox) {
+                msgBox.innerText = "Erro ao tentar reenviar.";
+                msgBox.style.color = "#ef4444";
+                msgBox.style.opacity = "1";
+            }
+            resetarBotao();
+        });
+    }
+
+    function iniciarContagem(segundosTotais) {
+        const btn = document.getElementById('btn-reenviar');
+        let tempoRestante = segundosTotais;
+        
+        if (intervaloContagem) clearInterval(intervaloContagem);
+
+        btn.style.pointerEvents = "none";
+        btn.style.color = "var(--text-dim)";
+        btn.style.textDecoration = "none";
+        
+        const formatar = (s) => {
+            const min = Math.floor(s / 60).toString().padStart(2, '0');
+            const seg = (s % 60).toString().padStart(2, '0');
+            return `${min}:${seg}`;
+        }
+
+        btn.innerHTML = `Aguarde ${formatar(tempoRestante)}...<br><span style="font-size: 1em">para gerar novo código</span>`;
+
+        intervaloContagem = setInterval(() => {
+            tempoRestante--;
+            btn.innerHTML = `Aguarde ${formatar(tempoRestante)}...<br><span style="font-size: 1em">para gerar novo código</span>`;
+
+            if (tempoRestante <= 0) {
+                clearInterval(intervaloContagem);
+                resetarBotao();
+            }
+        }, 1000);
+    }
+
+    function resetarBotao() {
+        const btn = document.getElementById('btn-reenviar');
+        
+        bloqueioAtivo = false;
+        btn.innerText = "Reenviar Código";
+        btn.style.color = "var(--neon-cyan)"; 
+        btn.style.opacity = "1";
+        btn.style.pointerEvents = "all";
+        
+        if (intervaloContagem) clearInterval(intervaloContagem);
+    }
+
+    // --- INICIALIZAÇÃO E TRATAMENTO DE ESTADO ---
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1. Verifica Erros Visuais (Vindos do Django no POST)
+        const serverError = "{{ error|default:''|escapejs }}";
+        if (serverError) {
+            const card = document.getElementById('validation-card');
+            const statusMsg = document.getElementById('status-msg');
+            const codigoField = document.getElementById('codigo');
+            
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = `<i class='fas fa-exclamation-circle'></i> ${serverError}`;
+            statusMsg.classList.add('status-error');
+            
+            // Adiciona classe de erro
+            codigoField.classList.add('input-error');
+        }
+
+        // 2. LÓGICA DE PERSISTÊNCIA (F5)
+        const tempoInicial = parseInt("{{ tempo_restante|default:0 }}");
+        
+        if (tempoInicial > 0) {
+            const msgBox = document.getElementById('msg-reenvio');
+            if(msgBox) {
+                msgBox.innerText = "Aguarde o tempo de segurança.";
+                msgBox.style.color = "var(--text-dim)";
+                msgBox.style.opacity = "1";
+            }
+            iniciarContagem(tempoInicial);
+        }
+    });
+</script>
+{% endblock %}

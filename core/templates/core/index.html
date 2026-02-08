@@ -1,0 +1,218 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="hero-container" style="height: auto; min-height: 50vh; padding-top: 40px;">
+    <div class="badge" data-aos="fade-down" style="margin-bottom: 10px;">SOLUÇÕES EM INFORMÁTICA</div>
+    
+    <h1 class="hero-title" data-aos="zoom-out-up" style="font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 15px;">
+        Seu PC novo<br>de novo<span style="color: var(--neon-cyan);">.</span>
+    </h1>
+    
+    <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" style="margin-bottom: 25px;">
+        <p>Deixamos seu computador rápido, seguro e pronto para usar. Atendimento especializado em ITAPETININGA.</p>
+    </div>
+    
+    <a href="{% url 'solicitar' %}" class="btn-primary" data-aos="fade-up" data-aos-delay="400" style="padding: 15px 35px;">
+        <i class="fas fa-check-circle"></i> PEDIR ORÇAMENTO
+    </a>
+</div>
+
+<div id="grid-servicos" class="modules-grid" style="padding: 40px 10% 0 10%; margin-top: 0;">
+    
+    <div class="module-card card-interativo" onclick="abrirBalao('detalhe-formatacao', this)" data-aos="fade-up">
+        <div class="icon-box"><i class="fas fa-rocket"></i></div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Formatação Completa</h3>
+        <p style="font-size: 0.9rem;">Instalação do Windows/Linux, drivers, Office e ativação completa.</p>
+        <div class="ver-mais">Ver detalhes <i class="fas fa-chevron-down"></i></div>
+    </div>
+
+    <div class="module-card card-interativo" onclick="abrirBalao('detalhe-limpeza', this)" data-aos="fade-up" data-aos-delay="100">
+        <div class="icon-box"><i class="fas fa-broom"></i></div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Limpeza e Térmica</h3>
+        <p style="font-size: 0.9rem;">Limpeza interna detalhada e troca de pasta térmica.</p>
+        <div class="ver-mais">Ver detalhes <i class="fas fa-chevron-down"></i></div>
+    </div>
+
+    <div class="module-card card-interativo" onclick="abrirBalao('detalhe-upgrade', this)" data-aos="fade-up" data-aos-delay="200">
+        <div class="icon-box"><i class="fas fa-laptop-medical"></i></div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Upgrade e Montagem</h3>
+        <p style="font-size: 0.9rem;">Troca de peças, instalação de SSD/RAM e montagem de computadores.</p>
+        <div class="ver-mais">Ver detalhes <i class="fas fa-chevron-down"></i></div>
+    </div>
+</div>
+
+<div id="container-balao" class="container-balao">
+    <div class="balao-glass">
+        
+        <div id="seta-indicadora" class="seta-balao"></div>
+
+        <div id="detalhe-formatacao" class="item-balao">
+            <div class="balao-header">
+                <i class="fas fa-rocket icone-grande"></i>
+                <div>
+                    <h3>Formatação Premium</h3>
+                    <p>Deixe seu PC zerado, sem vírus e super rápido.</p>
+                </div>
+            </div>
+            <div class="balao-grid">
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Backup Completo de Arquivos</li>
+                    <li><i class="fas fa-check-circle"></i> Windows 10 ou 11/Linux</li>
+                    <li><i class="fas fa-check-circle"></i> Drivers Atualizados</li>
+                </ul>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Pacote Office Instalado</li>
+                    <li><i class="fas fa-check-circle"></i> Antivírus e Codecs</li>
+                </ul>
+            </div>
+            <div class="balao-footer">
+                <a href="{% url 'solicitar' %}" class="btn-primary-small">Agendar Agora</a>
+            </div>
+        </div>
+
+        <div id="detalhe-limpeza" class="item-balao">
+            <div class="balao-header">
+                <i class="fas fa-broom icone-grande"></i>
+                <div>
+                    <h3>Limpeza Física & Térmica</h3>
+                    <p>Resolvemos aquecimento e barulho.</p>
+                </div>
+            </div>
+            <div class="balao-grid">
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Remoção total de poeira</li>
+                    <li><i class="fas fa-check-circle"></i> Limpeza de contatos (RAM/GPU)</li>
+                    <li><i class="fas fa-check-circle"></i> <strong>Troca de Pasta Térmica</strong></li>
+                </ul>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Organização de Cabos</li>
+                    <li><i class="fas fa-check-circle"></i> Teste de Estresse</li>
+                </ul>
+            </div>
+            <div class="balao-footer">
+                <a href="{% url 'solicitar' %}" class="btn-primary-small">Agendar Limpeza</a>
+            </div>
+        </div>
+
+        <div id="detalhe-upgrade" class="item-balao">
+            <div class="balao-header">
+                <i class="fas fa-laptop-medical icone-grande"></i>
+                <div>
+                    <h3>Upgrade de Performance</h3>
+                    <p>Melhore o desempenho sem precisar comprar um PC novo.</p>
+                </div>
+            </div>
+            <div class="balao-grid">
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Instalação de SSD NVMe/SATA</li>
+                    <li><i class="fas fa-check-circle"></i> Aumento de Memória RAM</li>
+                    <li><i class="fas fa-check-circle"></i> Troca de Processador/Placa de Vídeo</li>
+                </ul>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Troca de Fonte</li>
+                    <li><i class="fas fa-check-circle"></i> Montagem de Computadores</li>
+                </ul>
+            </div>
+            <div class="balao-footer">
+                <a href="{% url 'solicitar' %}" class="btn-primary-small">Solicitar Upgrade</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Variável para evitar cliques repetidos enquanto a animação acontece
+    let isAnimating = false;
+
+    function abrirBalao(idConteudo, cardClicado) {
+        // Se estiver animando, ignora o clique para não quebrar o layout
+        if (isAnimating) return;
+
+        const container = document.getElementById('container-balao');
+        const vidro = container.querySelector('.balao-glass');
+        const seta = document.getElementById('seta-indicadora');
+        const grid = document.getElementById('grid-servicos');
+        
+        // --- LÓGICA DE TOGGLE (FECHAR SE JÁ ESTIVER ABERTO) ---
+        // Se clicar no mesmo card que já está ativo, fecha o balão.
+        if (cardClicado.classList.contains('card-ativo')) {
+            fecharBalao();
+            return; 
+        }
+
+        // 1. Limpa visuais anteriores
+        document.querySelectorAll('.card-interativo').forEach(c => c.classList.remove('card-ativo'));
+        document.querySelectorAll('.item-balao').forEach(item => item.classList.remove('ativo'));
+        
+        // Garante que a classe de fechar não esteja lá (caso clique muito rápido)
+        if(vidro) vidro.classList.remove('balao-fechando');
+
+        // 2. Ativa visuais (Spotlight e Card Ativo)
+        grid.classList.add('has-active');
+        cardClicado.classList.add('card-ativo');
+        document.getElementById(idConteudo).classList.add('ativo');
+
+        // 3. Mostra o balão (se estiver oculto)
+        if (container.style.display !== 'block') {
+            container.style.display = 'block';
+            
+            // Scroll suave para centralizar
+            setTimeout(() => {
+                const yOffset = -50; 
+                const y = grid.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }, 100);
+        }
+
+        // 4. Posiciona a seta
+        atualizarPosicaoSeta(cardClicado, container, seta);
+    }
+
+    function fecharBalao() {
+        const container = document.getElementById('container-balao');
+        const vidro = container.querySelector('.balao-glass');
+        
+        // Se já estiver fechado ou se já estiver animando o fechamento, não faz nada
+        if (container.style.display === 'none' || isAnimating) return;
+
+        isAnimating = true; // Bloqueia novos cliques
+
+        // 1. Adiciona a classe de animação CSS (que definimos no style.css)
+        if(vidro) vidro.classList.add('balao-fechando');
+
+        // 2. Remove os estados visuais dos cards IMEDIATAMENTE
+        // Isso dá um feedback rápido de que o clique funcionou
+        document.getElementById('grid-servicos').classList.remove('has-active');
+        document.querySelectorAll('.card-interativo').forEach(c => c.classList.remove('card-ativo'));
+
+        // 3. Espera a animação terminar (450ms) para esconder o elemento
+        setTimeout(() => {
+            container.style.display = 'none';
+            if(vidro) vidro.classList.remove('balao-fechando'); // Limpa a classe para a próxima vez
+            isAnimating = false; // Libera cliques novamente
+        }, 450); 
+    }
+
+    function atualizarPosicaoSeta(card, container, seta) {
+        const rectCard = card.getBoundingClientRect();
+        const rectContainer = container.getBoundingClientRect();
+        
+        // Calcula o centro do card relativo ao container
+        const centroRelativo = (rectCard.left - rectContainer.left) + (rectCard.width / 2);
+        
+        seta.style.left = `${centroRelativo}px`;
+    }
+
+    // Mantém a seta alinhada se redimensionar a tela
+    window.addEventListener('resize', () => {
+        const cardAtivo = document.querySelector('.card-ativo');
+        const container = document.getElementById('container-balao');
+        const seta = document.getElementById('seta-indicadora');
+        
+        if (cardAtivo && container.style.display === 'block') {
+            atualizarPosicaoSeta(cardAtivo, container, seta);
+        }
+    });
+</script>
+{% endblock %}

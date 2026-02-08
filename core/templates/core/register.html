@@ -1,0 +1,200 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="height: calc(95vh - 60px); display: flex; justify-content: center; align-items: center; padding: 10px;">
+    
+    <div id="register-card" class="module-card" style="max-width: 500px; width: 100%; padding: 30px; border-radius: 20px;" data-aos="zoom-in">
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <div style="background: rgba(112, 0, 255, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-user-plus" style="font-size: 1.5rem; color: var(--neon-purple);"></i>
+            </div>
+            <h2 style="font-family: 'Syne'; font-size: 1.8rem; margin-bottom: 5px;">Criar Conta</h2>
+            
+            <p id="status-msg" class="status-text">
+                Preencha seus dados para começar.
+            </p>
+        </div>
+
+        <form method="post" novalidate onsubmit="validarCadastro(event)">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Nome Completo</label>
+                <input type="text" name="full_name" id="full_name"
+                       value="{{ full_name|default:'' }}"
+                       oninput="limparErro(this)"
+                       class="input-padrao"
+                       placeholder="Ex: Maria Silva">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">E-mail</label>
+                <input type="email" name="email" id="email"
+                       value="{{ email|default:'' }}"
+                       oninput="limparErro(this)"
+                       class="input-padrao"
+                       placeholder="seu@email.com">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Senha</label>
+                <input type="password" name="password" id="password"
+                       oninput="validarSenhaTempoReal(this)"
+                       class="input-padrao"
+                       placeholder="Crie uma senha segura">
+                
+                <div id="password-rules" class="password-rules-box">
+                    <p id="rule-length" class="rule-item"><i class="fas fa-circle"></i> Mínimo 8 caracteres</p>
+                    <p id="rule-upper" class="rule-item"><i class="fas fa-circle"></i> Letra Maiúscula</p>
+                    <p id="rule-lower" class="rule-item"><i class="fas fa-circle"></i> Letra Minúscula</p>
+                    <p id="rule-number" class="rule-item"><i class="fas fa-circle"></i> Número</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display:block; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">Confirmar Senha</label>
+                <input type="password" name="confirm_password" id="confirm_password"
+                       oninput="limparErro(this)"
+                       class="input-padrao"
+                       placeholder="Repita a senha">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 14px; font-size: 0.9rem;">
+                CRIAR CONTA
+            </button>
+        </form>
+
+        <div style="margin-top: 25px; text-align: center;">
+            <p style="font-size: 0.8rem; color: var(--text-dim);">
+                Já tem uma conta? <a href="{% url 'login' %}" style="color: var(--neon-cyan); text-decoration: none;">Fazer Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function limparErro(input) {
+        // Remove a classe do CSS global
+        input.classList.remove('input-error');
+        
+        // Verifica se ainda há erros para resetar a mensagem
+        const inputsComErro = document.querySelectorAll('.input-error');
+        
+        if (inputsComErro.length === 0) {
+            const msg = document.getElementById('status-msg');
+            msg.innerText = "Preencha seus dados para começar.";
+            msg.classList.remove('status-error');
+            // Remove ícones se houver
+            msg.innerHTML = "Preencha seus dados para começar.";
+        }
+    }
+
+    function validarCadastro(event) {
+        const nameField = document.getElementById('full_name');
+        const emailField = document.getElementById('email');
+        const passField = document.getElementById('password');
+        const confirmField = document.getElementById('confirm_password');
+        
+        const card = document.getElementById('register-card');
+        const statusMsg = document.getElementById('status-msg');
+        
+        let temErro = false;
+        let msgErro = "Preencha todos os campos obrigatórios.";
+
+        // Reset da animação
+        card.classList.remove('shake-error');
+        void card.offsetWidth; 
+
+        // Validação de Campos Vazios
+        if (!nameField.value.trim()) { marcarErroJs(nameField); temErro = true; }
+        if (!emailField.value.trim()) { marcarErroJs(emailField); temErro = true; }
+        if (!passField.value.trim()) { marcarErroJs(passField); temErro = true; }
+        if (!confirmField.value.trim()) { marcarErroJs(confirmField); temErro = true; }
+
+        // Validação de Senhas Iguais (Só verifica se não estiverem vazias)
+        if (!temErro && passField.value !== confirmField.value) {
+            marcarErroJs(passField);
+            marcarErroJs(confirmField);
+            temErro = true;
+            msgErro = "As senhas não coincidem.";
+        }
+
+        if (temErro) {
+            event.preventDefault();
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = `<i class='fas fa-exclamation-circle'></i> ${msgErro}`;
+            statusMsg.classList.add('status-error');
+        }
+    }
+
+    function marcarErroJs(input) {
+        // Usa a classe do CSS em vez de style inline
+        input.classList.add('input-error');
+        
+        input.animate([
+            { transform: 'translateX(0)' },
+            { transform: 'translateX(5px)' },
+            { transform: 'translateX(-5px)' },
+            { transform: 'translateX(0)' }
+        ], { duration: 300 });
+    }
+
+    // Tratamento de erros vindos do Backend (Django)
+    document.addEventListener("DOMContentLoaded", function() {
+        const serverError = "{{ error|default:''|escapejs }}";
+        
+        if (serverError) {
+            const card = document.getElementById('register-card');
+            const statusMsg = document.getElementById('status-msg');
+            
+            // Ativa o visual de erro
+            card.classList.add('shake-error');
+            statusMsg.innerHTML = `<i class='fas fa-exclamation-circle'></i> ${serverError}`;
+            statusMsg.classList.add('status-error');
+        }
+    });
+
+    // Validação de Senha em Tempo Real
+    function validarSenhaTempoReal(input) {
+        const senha = input.value;
+        const rulesBox = document.getElementById('password-rules');
+        
+        // Mostra a caixinha só quando começar a digitar
+        if (senha.length > 0) {
+            rulesBox.style.display = "block";
+        } else {
+            rulesBox.style.display = "none";
+        }
+
+        // 1. Mínimo 8 caracteres
+        atualizarRegra('rule-length', senha.length >= 8);
+
+        // 2. Letra Maiúscula (Regex A-Z)
+        atualizarRegra('rule-upper', /[A-Z]/.test(senha));
+
+        // 3. Letra Minúscula (Regex a-z)
+        atualizarRegra('rule-lower', /[a-z]/.test(senha));
+
+        // 4. Número (Regex 0-9)
+        atualizarRegra('rule-number', /[0-9]/.test(senha));
+
+        limparErro(input); 
+    }
+
+    function atualizarRegra(idElemento, estaValido) {
+        const elemento = document.getElementById(idElemento);
+        const icone = elemento.querySelector('i');
+
+        if (estaValido) {
+            elemento.classList.add('rule-success');
+            icone.classList.remove('fa-circle');
+            icone.classList.add('fa-check'); // Vira um "Check"
+        } else {
+            elemento.classList.remove('rule-success');
+            icone.classList.add('fa-circle'); // Volta a ser bolinha
+            icone.classList.remove('fa-check');
+        }
+    }
+</script>
+{% endblock %}
