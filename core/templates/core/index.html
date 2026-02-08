@@ -126,7 +126,6 @@
     let isAnimating = false;
 
     function abrirBalao(idConteudo, cardClicado) {
-        // Se estiver animando, ignora o clique para não quebrar o layout
         if (isAnimating) return;
 
         const container = document.getElementById('container-balao');
@@ -134,39 +133,57 @@
         const seta = document.getElementById('seta-indicadora');
         const grid = document.getElementById('grid-servicos');
         
-        // --- LÓGICA DE TOGGLE (FECHAR SE JÁ ESTIVER ABERTO) ---
-        // Se clicar no mesmo card que já está ativo, fecha o balão.
+        // --- NOVO: Move o balão para o lugar certo antes de abrir ---
+        gerenciarPosicaoBalao(cardClicado);
+        // -----------------------------------------------------------
+
+        // Se clicar no mesmo card que já está ativo, fecha.
         if (cardClicado.classList.contains('card-ativo')) {
             fecharBalao();
             return; 
         }
 
-        // 1. Limpa visuais anteriores
+        // Limpa visuais anteriores
         document.querySelectorAll('.card-interativo').forEach(c => c.classList.remove('card-ativo'));
         document.querySelectorAll('.item-balao').forEach(item => item.classList.remove('ativo'));
         
-        // Garante que a classe de fechar não esteja lá (caso clique muito rápido)
         if(vidro) vidro.classList.remove('balao-fechando');
 
-        // 2. Ativa visuais (Spotlight e Card Ativo)
+        // Ativa visuais
         grid.classList.add('has-active');
         cardClicado.classList.add('card-ativo');
         document.getElementById(idConteudo).classList.add('ativo');
 
-        // 3. Mostra o balão (se estiver oculto)
-        if (container.style.display !== 'block') {
-            container.style.display = 'block';
-            
-            // Scroll suave para centralizar
-            setTimeout(() => {
-                const yOffset = -50; 
-                const y = grid.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({top: y, behavior: 'smooth'});
-            }, 100);
-        }
+        // Mostra o container
+        container.style.display = 'block';
 
-        // 4. Posiciona a seta
+        // Scroll suave (Ajustado para focar no card + balão)
+        setTimeout(() => {
+            const offset = window.innerWidth <= 768 ? -20 : -50;
+            const y = cardClicado.getBoundingClientRect().top + window.pageYOffset + offset;
+            window.scrollTo({top: y, behavior: 'smooth'});
+        }, 100);
+
+        // Posiciona a seta (apenas Desktop)
         atualizarPosicaoSeta(cardClicado, container, seta);
+    }
+
+    // --- NOVA FUNÇÃO MÁGICA ---
+    function gerenciarPosicaoBalao(cardClicado) {
+        const container = document.getElementById('container-balao');
+        const grid = document.getElementById('grid-servicos');
+
+        if (window.innerWidth <= 768) {
+            // MOBILE: Move o balão para DENTRO do grid, logo após o card clicado
+            // O `nextSibling` insere logo depois do elemento atual
+            grid.insertBefore(container, cardClicado.nextSibling);
+        } else {
+            // DESKTOP: Garante que o balão esteja FORA do grid (no final)
+            // Se o balão estiver dentro do grid, move ele para fora
+            if (container.parentNode === grid) {
+                grid.parentNode.insertBefore(container, grid.nextSibling);
+            }
+        }
     }
 
     function fecharBalao() {

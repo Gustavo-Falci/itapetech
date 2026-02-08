@@ -979,23 +979,19 @@ select option {
     /* 5. Balão de Detalhes (Transformação em Bottom Sheet) */
     /* No celular, ele não flutua. Ele fixa no fundo da tela. */
     .container-balao {
-        position: fixed !important;
-        top: auto !important;
-        bottom: 0 !important;
-        left: 0 !important;
+        grid-column: 1 / -1 !important; /* Ocupa de ponta a ponta */
         width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        z-index: 9999;
+        margin-top: 10px !important;
+        margin-bottom: 20px !important;
+        position: relative !important; /* Garante que não flutue */
+        order: initial !important; /* Respeita a ordem do HTML */
     }
 
     .balao-glass {
-        border-radius: 25px 25px 0 0 !important; /* Arredonda só em cima */
-        max-height: 80vh; /* Ocupa no máximo 80% da tela */
-        overflow-y: auto; /* Permite rolar se o texto for grande */
-        margin: 0 !important;
-        border-bottom: none;
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+        border-radius: 20px !important; /* Bordas redondas completas */
+        max-height: none !important; /* Remove limite de altura */
+        border: 1px solid rgba(0, 242, 255, 0.3); /* Borda sutil */
+        background: rgba(13, 17, 23, 0.6); /* Fundo um pouco mais transparente */
     }
 
     /* Remove a setinha indicadora no mobile, pois o balão vem de baixo */
