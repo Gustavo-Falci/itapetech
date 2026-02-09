@@ -528,6 +528,18 @@ select option {
 }
 
 /* =========================================
+   NOVO: CONTAINER DE FORMULÁRIOS CENTRALIZADOS
+   ========================================= */
+/* Versão Desktop (Mantém o visual centralizado bonito) */
+.container-centralizado {
+    min-height: calc(100vh - 100px); /* Altura mínima da tela menos o menu */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centraliza verticalmente */
+    padding: 20px;
+}
+
+/* =========================================
    PÁGINAS ESPECÍFICAS
    ========================================= */
 
@@ -922,7 +934,7 @@ select option {
 }
 
 /* =========================================
-   MEDIA QUERIES - MOBILE (ADICIONE NO FINAL)
+   MEDIA QUERIES - MOBILE (ATUALIZADO)
    ========================================= */
 @media (max-width: 768px) {
 
@@ -1016,9 +1028,38 @@ select option {
         gap: 10px;
     }
     
-    /* 6. Formulários (Login/Registro/Solicitar) */
+    /* 6. Formulários (Login/Registro/Solicitar) - CORREÇÃO */
     .module-card {
         padding: 25px !important;
         margin: 10px;
+    }
+
+    .container-centralizado {
+        display: block; /* Remove a centralização vertical forçada */
+        
+        /* AUMENTADO: Empurra o conteúdo para baixo para não bater no menu */
+        padding-top: 30px !important; 
+        
+        padding-bottom: 120px; /* Espaço extra no final (para o botão WhatsApp) */
+        padding-left: 0px;    /* Margem de segurança na esquerda */
+        padding-right: 22px;   /* Margem de segurança na direita */
+        min-height: auto;
+    }
+
+    /* Ajuste fino para o cartão não parecer "esmagado" */
+    #form-card, 
+    #login-card, 
+    #register-card {
+        margin-top: 0 !important; /* Quem controla o espaço agora é o container acima */
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Corrige o tamanho da fonte do título para não quebrar feio */
+    #form-card h2,
+    #login-card h2,
+    #register-card h2 {
+        font-size: 1.6rem !important;
+        margin-top: 10px;
     }
 }
