@@ -1035,7 +1035,7 @@ select option {
     }
 
     .container-centralizado {
-        display: block; /* Remove a centralização vertical forçada */
+         /* Remove a centralização vertical forçada */
         
         /* AUMENTADO: Empurra o conteúdo para baixo para não bater no menu */
         padding-top: 30px !important; 
