@@ -1035,31 +1035,40 @@ select option {
     }
 
     .container-centralizado {
-         /* Remove a centralização vertical forçada */
-        
-        /* AUMENTADO: Empurra o conteúdo para baixo para não bater no menu */
-        padding-top: 30px !important; 
-        
-        padding-bottom: 120px; /* Espaço extra no final (para o botão WhatsApp) */
-        padding-left: 0px;    /* Margem de segurança na esquerda */
-        padding-right: 30px;   /* Margem de segurança na direita */
-        min-height: auto;
+        display: block;
+        padding-top: 90px !important; /* Mais espaço do topo */
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        padding-bottom: 100px;
+        width: 100vw; /* Garante que o container use a largura da janela */
     }
 
-    /* Ajuste fino para o cartão não parecer "esmagado" */
+    /* 2. Correção Crítica dos Cards (Login, Registro, Solicitar) */
     #form-card, 
     #login-card, 
-    #register-card {
-        margin-top: 0 !important; /* Quem controla o espaço agora é o container acima */
+    #register-card,
+    #validation-card,
+    .module-card {
+        /* Força a largura a caber no container pai */
         width: 100% !important;
         max-width: 100% !important;
+        
+        /* Remove margens laterais que empurram pra fora */
+        margin-left: 1vh !important;
+        margin-right: 0 !important;
+        
+        /* Diminui o "gordura" interna do card no celular */
+        /* De 30px/40px para 20px, ganha espaço útil */
+        padding: 25px 20px !important; 
+        
+        /* Garante que a borda conte como tamanho total */
+        box-sizing: border-box !important; 
     }
-    
-    /* Corrige o tamanho da fonte do título para não quebrar feio */
-    #form-card h2,
-    #login-card h2,
-    #register-card h2 {
-        font-size: 1.6rem !important;
-        margin-top: 10px;
+
+    /* 3. Ajuste dos Inputs para não vazarem de dentro do card */
+    .input-padrao {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important; /* Evita zoom automático no iPhone ao clicar */
     }
 }
