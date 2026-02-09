@@ -1054,7 +1054,7 @@ select option {
         max-width: 100% !important;
         
         /* Remove margens laterais que empurram pra fora */
-        margin-left: 1vh !important;
+        margin-left: 0 !important;
         margin-right: 0 !important;
         
         /* Diminui o "gordura" interna do card no celular */
