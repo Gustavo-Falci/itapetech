@@ -1,16 +1,12 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="hero-container" style="height: auto; min-height: 50vh; padding-top: 40px;">
+<div class="hero-container" style="height: auto; min-height: 13vh; padding-top: 10px;">
     <div class="badge" data-aos="fade-down" style="margin-bottom: 10px;">SOLUÇÕES EM INFORMÁTICA</div>
     
     <h1 class="hero-title" data-aos="zoom-out-up" style="font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 15px;">
         Seu PC novo<br>de novo<span style="color: var(--neon-cyan);">.</span>
     </h1>
-    
-    <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" style="margin-bottom: 25px;">
-        <p>Deixamos seu computador rápido, seguro e pronto para usar. Atendimento especializado em ITAPETININGA.</p>
-    </div>
     
     <a href="{% url 'solicitar' %}" class="btn-primary" data-aos="fade-up" data-aos-delay="400" style="padding: 15px 35px;">
         <i class="fas fa-check-circle"></i> PEDIR ORÇAMENTO
@@ -118,6 +114,16 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<div class="final-banner" data-aos="fade-up">
+    <div class="banner-content">
+        <i class="fas fa-map-marker-alt location-icon"></i>
+        <p class="banner-text">Deixamos seu computador rápido, seguro e pronto para usar.</p>
+        <div class="banner-location">
+            Atendimento especializado em <span class="destaque-cidade">ITAPETININGA</span>
+        </div>
     </div>
 </div>
 

@@ -921,6 +921,52 @@ select option {
     padding-top: 30px;
 }
 
+.final-banner {
+    width: 100%;
+    padding: 60px 20px;
+    margin-top: 40px;
+    border-top: 1px solid var(--border-glass);
+    /* Um degradê bem suave que escurece para o final da página */
+    background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.02));
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.banner-content {
+    max-width: 600px;
+}
+
+.location-icon {
+    font-size: 2rem;
+    color: var(--neon-cyan);
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+}
+
+.banner-text {
+    color: var(--text-main);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.banner-location {
+    font-family: 'Space Mono', monospace;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.destaque-cidade {
+    color: #fff;
+    font-weight: bold;
+    border-bottom: 2px solid var(--neon-cyan);
+    padding-bottom: 2px;
+}
+
 /* Responsividade Geral */
 @media (max-width: 768px) {
     .balao-header { flex-direction: column; text-align: center; align-items: center; }

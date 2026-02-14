@@ -13,3 +13,5 @@ db.sqlite3
 # Ignorar arquivos do sistema operacional
 .DS_Store
 Thumbs.db
+
+SSH_ITapeTech/
