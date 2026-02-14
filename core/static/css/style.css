@@ -923,7 +923,7 @@ select option {
 
 .final-banner {
     width: 100%;
-    padding: 60px 20px;
+    padding: 58px 20px;
     margin-top: 40px;
     border-top: 1px solid var(--border-glass);
     /* Um degradê bem suave que escurece para o final da página */
